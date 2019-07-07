@@ -3,6 +3,7 @@ package edu.iis.mto.blog.domain.repository;
 import static edu.iis.mto.blog.domain.model.AccountStatus.NEW;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
 import edu.iis.mto.blog.domain.model.BlogPost;
@@ -70,5 +71,16 @@ public class LikePostRepositoryTest {
 
     assertThat(returnedLikes, hasSize(1));
     assertThat(returnedLikes, contains(like));
+  }
+
+  @Test
+  public void shouldNotContainRemovedLike() {
+    repository.save(like);
+    repository.delete(like);
+
+    List<LikePost> returnedLikes = repository.findAll();
+
+    assertThat(returnedLikes, hasSize(0));
+    assertThat(returnedLikes, not(contains(like)));
   }
 }
