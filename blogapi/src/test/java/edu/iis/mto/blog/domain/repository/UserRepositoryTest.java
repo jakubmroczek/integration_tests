@@ -1,6 +1,7 @@
 package edu.iis.mto.blog.domain.repository;
 
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
 import edu.iis.mto.blog.domain.model.AccountStatus;
@@ -13,6 +14,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
@@ -100,4 +102,16 @@ public class UserRepositoryTest {
         assertThat(returnedUsers, contains(user));
     }
 
+    @Test
+    public void shouldNotQueryReturnAnyUser() {
+        repository.save(user);
+
+        List<User> returnedUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(
+            "Not exisiting first name",
+            "Not existing surname",
+            "notexisitngemail@domain.com"
+        );
+
+        assertThat(returnedUsers, hasSize(0));
+    }
 }
