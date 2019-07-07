@@ -1,5 +1,6 @@
 package edu.iis.mto.blog.api;
 
+import edu.iis.mto.blog.domain.errors.DomainError;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -104,6 +105,11 @@ public class BlogApi {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public @ResponseBody ResponseEntity handleException(IllegalArgumentException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    }
+
+    @ExceptionHandler(DomainError.class)
+    public @ResponseBody ResponseEntity handleException(DomainError e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 
     private Id id(Long id) {

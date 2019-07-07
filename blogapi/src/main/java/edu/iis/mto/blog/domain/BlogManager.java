@@ -41,6 +41,11 @@ public class BlogManager extends DomainService implements BlogService {
         User user = userRepository.findById(userId)
                                   .orElseThrow(domainError(DomainError.USER_NOT_FOUND));
         BlogPost post = mapper.mapToEntity(postRequest);
+
+        if (user.getAccountStatus() != AccountStatus.CONFIRMED) {
+            throw new DomainError(DomainError.UNCONFIRMED_CANNOT_POST);
+        }
+
         post.setUser(user);
         blogPostRepository.save(post);
         return post.getId();
