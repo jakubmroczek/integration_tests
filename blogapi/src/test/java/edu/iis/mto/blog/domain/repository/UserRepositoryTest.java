@@ -1,20 +1,19 @@
 package edu.iis.mto.blog.domain.repository;
 
-import java.util.List;
+import static org.hamcrest.Matchers.contains;
+import static org.junit.Assert.assertThat;
 
+import edu.iis.mto.blog.domain.model.AccountStatus;
+import edu.iis.mto.blog.domain.model.User;
+import java.util.List;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import edu.iis.mto.blog.domain.model.AccountStatus;
-import edu.iis.mto.blog.domain.model.User;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -41,7 +40,7 @@ public class UserRepositoryTest {
 
         List<User> users = repository.findAll();
 
-        Assert.assertThat(users, Matchers.hasSize(0));
+        assertThat(users, Matchers.hasSize(0));
     }
 
     @Test
@@ -49,8 +48,8 @@ public class UserRepositoryTest {
         User persistedUser = entityManager.persist(user);
         List<User> users = repository.findAll();
 
-        Assert.assertThat(users, Matchers.hasSize(1));
-        Assert.assertThat(users.get(0).getEmail(), Matchers.equalTo(persistedUser.getEmail()));
+        assertThat(users, Matchers.hasSize(1));
+        assertThat(users.get(0).getEmail(), Matchers.equalTo(persistedUser.getEmail()));
     }
 
     @Test
@@ -58,7 +57,20 @@ public class UserRepositoryTest {
 
         User persistedUser = repository.save(user);
 
-        Assert.assertThat(persistedUser.getId(), Matchers.notNullValue());
+        assertThat(persistedUser.getId(), Matchers.notNullValue());
+    }
+
+    @Test
+    public void shouldFindUserByFirstName() {
+        repository.save(user);
+
+        List<User> returnedUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(
+            "Jan",
+            "Not existing surname",
+            "notexistingemail@domain.com"
+        );
+
+        assertThat(returnedUsers, contains(user));
     }
 
 }
