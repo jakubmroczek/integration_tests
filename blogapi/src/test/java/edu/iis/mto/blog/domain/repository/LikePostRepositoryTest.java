@@ -1,11 +1,16 @@
 package edu.iis.mto.blog.domain.repository;
 
+import static edu.iis.mto.blog.builder.BlogPostBuilder.blogPost;
+import static edu.iis.mto.blog.builder.UserBuilder.user;
 import static edu.iis.mto.blog.domain.model.AccountStatus.NEW;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
+import edu.iis.mto.blog.builder.Builder;
 import edu.iis.mto.blog.domain.model.BlogPost;
 import edu.iis.mto.blog.domain.model.LikePost;
 import edu.iis.mto.blog.domain.model.User;
@@ -83,4 +88,29 @@ public class LikePostRepositoryTest {
     assertThat(returnedLikes, hasSize(0));
     assertThat(returnedLikes, not(contains(like)));
   }
+
+  @Test
+  public void shouldContainUpdatedLike() {
+    repository.save(like);
+
+    User anotherUser = a(user().withFirstName("Jakub").withLastName("Tynko").withEmail("tynko@domain.com").withAccountStatus(NEW));
+    entityManager.persist(anotherUser);
+
+    BlogPost anotherPost = a(blogPost().withUser(anotherUser).withEntry("Hello world!"));
+    entityManager.persist(anotherPost);
+
+    like.setUser(anotherUser);
+    like.setPost(anotherPost);
+    repository.save(like);
+
+    List<LikePost> likes = repository.findAll();
+    assertThat(likes, hasSize(1));
+    assertThat(like, hasProperty("user", is(anotherUser)));
+    assertThat(like, hasProperty("post", is(anotherPost)));
+  }
+
+  private <T> T a(Builder<T> builder) {
+    return builder.build();
+  }
+
 }
