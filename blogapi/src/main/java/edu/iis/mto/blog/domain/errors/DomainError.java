@@ -9,6 +9,7 @@ public class DomainError extends RuntimeException {
     public static final String SELF_LIKE = "cannot like own post";
     public static final String INVALID_ACCOUNT_STATE = "only a user with a CONFIRMED account status can add a like";
     public static final String UNCONFIRMED_CANNOT_POST = "unconfirmed users cannot post";
+    public static final String REMOVED_USER_POSTS = "can not query for a removed user's posts";
 
     public DomainError(String msg) {
         super(msg);
