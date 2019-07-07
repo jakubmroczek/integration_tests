@@ -9,9 +9,15 @@ public class UserBuilder implements Builder<User> {
   private String lastName;
   private String email;
   private AccountStatus accountStatus;
+  private long id;
 
   public static UserBuilder user() {
     return new UserBuilder();
+  }
+
+  public UserBuilder withId(long id) {
+    this.id = id;
+    return this;
   }
 
   public UserBuilder withFirstName(String firstName) {
@@ -37,6 +43,7 @@ public class UserBuilder implements Builder<User> {
   @Override
   public User build() {
     User user = new User();
+    user.setId(id);
     user.setFirstName(firstName);
     user.setLastName(lastName);
     user.setEmail(email);
@@ -46,5 +53,4 @@ public class UserBuilder implements Builder<User> {
 
   private UserBuilder() {
   }
-
 }

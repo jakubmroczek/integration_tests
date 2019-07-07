@@ -6,10 +6,16 @@ import edu.iis.mto.blog.domain.model.User;
 public class BlogPostBuilder implements Builder<BlogPost> {
 
   private User user;
-  private String entry;
+  private String entry = "";
+  private long id;
 
   public static BlogPostBuilder blogPost() {
     return new BlogPostBuilder();
+  }
+
+  public BlogPostBuilder withId(long id) {
+    this.id = id;
+    return this;
   }
 
   private BlogPostBuilder() {
@@ -28,9 +34,9 @@ public class BlogPostBuilder implements Builder<BlogPost> {
   @Override
   public BlogPost build() {
     BlogPost post = new BlogPost();
+    post.setId(id);
     post.setUser(user);
     post.setEntry(entry);
     return post;
   }
-
 }
