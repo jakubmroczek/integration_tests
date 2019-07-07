@@ -38,6 +38,7 @@ public class LikePostRepositoryTest {
   private BlogPost post;
   private LikePost like;
   private User anotherUser;
+  private BlogPost anotherPost;
 
   @Before
   public void setUp() {
@@ -56,11 +57,11 @@ public class LikePostRepositoryTest {
   }
 
   private void setUpTestPost() {
-    post = new BlogPost();
-    post.setUser(user);
-    post.setEntry("Lorem ipsum");
-
+    post = a(blogPost().withUser(user).withEntry("Lorem ipsum"));
     entityManager.persist(post);
+
+    anotherPost = a(blogPost().withUser(anotherUser).withEntry("Hello world!"));
+    entityManager.persist(anotherPost);
   }
 
   private void setUpTestLike() {
@@ -94,9 +95,6 @@ public class LikePostRepositoryTest {
   public void shouldContainUpdatedLike() {
     repository.save(like);
 
-    BlogPost anotherPost = a(blogPost().withUser(anotherUser).withEntry("Hello world!"));
-    entityManager.persist(anotherPost);
-
     like.setUser(anotherUser);
     like.setPost(anotherPost);
     repository.save(like);
@@ -118,6 +116,13 @@ public class LikePostRepositoryTest {
   public void findLikeByUserAndPost_shouldNotFindAnything_whenWrongUserSupplied() {
     repository.save(like);
     Optional<LikePost> result = repository.findByUserAndPost(anotherUser, post);
+    assertThat(result, is(Optional.empty()));
+  }
+
+  @Test
+  public void findLikeByUserAndPost_shouldNotFindAnything_whenWrongPostSupplied() {
+    repository.save(like);
+    Optional<LikePost> result = repository.findByUserAndPost(user, anotherPost);
     assertThat(result, is(Optional.empty()));
   }
 
