@@ -15,6 +15,7 @@ import edu.iis.mto.blog.domain.model.BlogPost;
 import edu.iis.mto.blog.domain.model.LikePost;
 import edu.iis.mto.blog.domain.model.User;
 import java.util.List;
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,22 +37,22 @@ public class LikePostRepositoryTest {
   private User user;
   private BlogPost post;
   private LikePost like;
+  private User anotherUser;
 
   @Before
   public void setUp() {
     setUpTestUser();
     setUpTestPost();
     setUpTestLike();
+
   }
 
   private void setUpTestUser() {
-    user = new User();
-    user.setFirstName("John");
-    user.setLastName("Doe");
-    user.setEmail("john@domain.com");
-    user.setAccountStatus(NEW);
-
+    user = a(user().withFirstName("John").withLastName("Doe").withEmail("john@domain.com").withAccountStatus(NEW));
     entityManager.persist(user);
+
+    anotherUser = a(user().withFirstName("Jakub").withLastName("Tynko").withEmail("tynko@domain.com").withAccountStatus(NEW));
+    entityManager.persist(anotherUser);
   }
 
   private void setUpTestPost() {
@@ -93,9 +94,6 @@ public class LikePostRepositoryTest {
   public void shouldContainUpdatedLike() {
     repository.save(like);
 
-    User anotherUser = a(user().withFirstName("Jakub").withLastName("Tynko").withEmail("tynko@domain.com").withAccountStatus(NEW));
-    entityManager.persist(anotherUser);
-
     BlogPost anotherPost = a(blogPost().withUser(anotherUser).withEntry("Hello world!"));
     entityManager.persist(anotherPost);
 
@@ -114,6 +112,13 @@ public class LikePostRepositoryTest {
     repository.save(like);
     LikePost result = repository.findByUserAndPost(user, post).orElse(new LikePost());
     assertThat(result, is(like));
+  }
+
+  @Test
+  public void findLikeByUserAndPost_shouldNotFindAnything_whenWrongUserSupplied() {
+    repository.save(like);
+    Optional<LikePost> result = repository.findByUserAndPost(anotherUser, post);
+    assertThat(result, is(Optional.empty()));
   }
 
   private <T> T a(Builder<T> builder) {
