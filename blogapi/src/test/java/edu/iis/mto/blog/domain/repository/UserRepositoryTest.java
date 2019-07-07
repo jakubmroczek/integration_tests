@@ -87,4 +87,17 @@ public class UserRepositoryTest {
         assertThat(returnedUsers, contains(user));
     }
 
+    @Test
+    public void shouldFindUserByEmail() {
+        repository.save(user);
+
+        List<User> returnedUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(
+            "Not exisiting first name",
+            "Not existing surname",
+            "john@domain.com"
+        );
+
+        assertThat(returnedUsers, contains(user));
+    }
+
 }
