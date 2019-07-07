@@ -35,7 +35,7 @@ public class CreateBlogPostTest extends FunctionalTests {
         .expect()
         .log()
         .all()
-        .statusCode(HttpStatus.SC_BAD_REQUEST)
+        .statusCode(HttpStatus.SC_FORBIDDEN)
         .when()
         .post(POST_API, 2);
   }
@@ -50,7 +50,7 @@ public class CreateBlogPostTest extends FunctionalTests {
         .expect()
         .log()
         .all()
-        .statusCode(HttpStatus.SC_BAD_REQUEST)
+        .statusCode(HttpStatus.SC_FORBIDDEN)
         .when()
         .post(POST_API, 3);
   }

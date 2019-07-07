@@ -109,7 +109,7 @@ public class BlogApi {
 
     @ExceptionHandler(DomainError.class)
     public @ResponseBody ResponseEntity handleException(DomainError e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 
     private Id id(Long id) {
