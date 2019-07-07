@@ -31,6 +31,7 @@ public class UserRepositoryTest {
     public void setUp() {
         user = new User();
         user.setFirstName("Jan");
+        user.setLastName("Doe");
         user.setEmail("john@domain.com");
         user.setAccountStatus(AccountStatus.NEW);
     }
@@ -67,6 +68,19 @@ public class UserRepositoryTest {
         List<User> returnedUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(
             "Jan",
             "Not existing surname",
+            "notexistingemail@domain.com"
+        );
+
+        assertThat(returnedUsers, contains(user));
+    }
+
+    @Test
+    public void shouldFindUserBySurname() {
+        repository.save(user);
+
+        List<User> returnedUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(
+            "Not exisiting first name",
+            "Doe",
             "notexistingemail@domain.com"
         );
 
