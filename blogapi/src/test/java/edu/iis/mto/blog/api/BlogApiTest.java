@@ -6,10 +6,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.stream.Stream;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.iis.mto.blog.api.request.UserRequest;
+import edu.iis.mto.blog.dto.Id;
+import edu.iis.mto.blog.services.BlogService;
+import edu.iis.mto.blog.services.DataFinder;
+import javax.persistence.EntityNotFoundException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -17,14 +22,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import edu.iis.mto.blog.api.request.UserRequest;
-import edu.iis.mto.blog.dto.Id;
-import edu.iis.mto.blog.services.BlogService;
-import edu.iis.mto.blog.services.DataFinder;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(BlogApi.class)
@@ -73,5 +70,11 @@ public class BlogApiTest {
             .accept(MediaType.APPLICATION_JSON_UTF8)
             .content(content))
             .andExpect(status().isConflict());
+    }
+
+    @Test
+    public void getRequestForNotExsitingUser_sholdReturn404HTTPResponseCode() throws Exception {
+        when(finder.getUserData(any())).thenThrow(EntityNotFoundException.class);
+        mvc.perform(post("/blog/user/id/{id}", 1)).andExpect(status().isNotFound());
     }
 }
