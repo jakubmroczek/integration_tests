@@ -109,6 +109,13 @@ public class LikePostRepositoryTest {
     assertThat(like, hasProperty("post", is(anotherPost)));
   }
 
+  @Test
+  public void shouldFindLikeByUserAndPost() {
+    repository.save(like);
+    LikePost result = repository.findByUserAndPost(user, post).orElse(new LikePost());
+    assertThat(result, is(like));
+  }
+
   private <T> T a(Builder<T> builder) {
     return builder.build();
   }
